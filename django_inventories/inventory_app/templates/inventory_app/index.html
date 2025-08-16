@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management System</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Inventory Management System</h1>
+            <div id="auth-section">
+                <div id="login-form">
+                    <h2>Login</h2>
+                    <input type="text" id="username" placeholder="Username">
+                    <input type="password" id="password" placeholder="Password">
+                    <button id="login-btn">Login</button>
+                    <button id="register-btn">Register</button>
+                    <p id="auth-message"></p>
+                </div>
+                <div id="user-info" style="display: none;">
+                    <p>Welcome, <span id="display-username"></span></p>
+                    <button id="logout-btn">Logout</button>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+            <div id="inventory-section" style="display: none;">
+                <h2>Inventory Items</h2>
+                <div class="controls">
+                    <button id="add-item-btn">Add New Item</button>
+                    <input type="text" id="search-items" placeholder="Search items...">
+                    <select id="category-filter">
+                        <option value="">All Categories</option>
+                    </select>
+                    <button id="low-stock-btn">Show Low Stock</button>
+                </div>
+                
+                <div id="item-form" style="display: none;">
+                    <h3>Add/Edit Item</h3>
+                    <input type="hidden" id="item-id">
+                    <input type="text" id="item-name" placeholder="Name" required>
+                    <textarea id="item-description" placeholder="Description"></textarea>
+                    <input type="number" id="item-quantity" placeholder="Quantity" min="0" required>
+                    <input type="number" id="item-price" placeholder="Price" min="0" step="0.01" required>
+                    <select id="item-category">
+                        <option value="">No Category</option>
+                    </select>
+                    <button id="save-item-btn">Save</button>
+                    <button id="cancel-item-btn">Cancel</button>
+                </div>
+                
+                <div id="category-form" style="display: none;">
+                    <h3>Add Category</h3>
+                    <input type="text" id="category-name" placeholder="Category Name" required>
+                    <textarea id="category-description" placeholder="Description"></textarea>
+                    <button id="save-category-btn">Save</button>
+                    <button id="cancel-category-btn">Cancel</button>
+                </div>
+                
+                <table id="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-items">
+                        <!-- Items will be loaded here -->
+                    </tbody>
+                </table>
+                
+                <div class="pagination">
+                    <button id="prev-page">Previous</button>
+                    <span id="page-info">Page 1</span>
+                    <button id="next-page">Next</button>
+                </div>
+            </div>
+            
+            <div id="history-section" style="display: none;">
+                <h2>Inventory History</h2>
+                <table id="history-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Action</th>
+                            <th>Change</th>
+                            <th>Previous Qty</th>
+                            <th>New Qty</th>
+                            <th>Timestamp</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-items">
+                        <!-- History will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
+
