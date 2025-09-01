@@ -14,12 +14,19 @@ import os
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
+from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
 DEBUG = os.getenv("DEBUG", "1") == "1"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.herokuapp.com",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -72,7 +79,7 @@ DATABASES = {
 }
 db_url = os.getenv("DATABASE_URL")  
 if db_url:
-    DATABASES["default"] = dj_database_url.parse(db_url, conn_max_age=600)
+    DATABASES["default"] = dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
     
     if not DATABASES["default"]["ENGINE"].endswith("mysql"):
         DATABASES["default"]["ENGINE"] = "django.db.backends.mysql"
@@ -117,3 +124,4 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https"
