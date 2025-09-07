@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+  <h1>Welcome</h1>
+
+  <section style="display:grid; gap:1rem; grid-template-columns: 1fr 1fr;">
+    <!-- Login -->
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      <h2>Login</h2>
+      {{ login_form.non_field_errors }}
+      <p><label>Username {{ login_form.username }}</label></p>
+      <p><label>Password {{ login_form.password }}</label></p>
+      <button type="submit">Login</button>
+    </form>
+
+    <!-- Sign up -->
+    <form method="post" action="{% url 'signup' %}">
+      {% csrf_token %}
+      <h2>Create account</h2>
+      {{ signup_form.non_field_errors }}
+      <p><label>Username {{ signup_form.username }}</label></p>
+      <p><label>Email {{ signup_form.email }}</label></p>
+      <p><label>Password {{ signup_form.password1 }}</label></p>
+      <p><label>Confirm {{ signup_form.password2 }}</label></p>
+      <button type="submit">Sign up</button>
+
+      <p style="margin-top:.5rem;font-size:.9rem;">
+        Already have an account? <a href="{% url 'login' %}">Log in</a>
+      </p>
+    </form>
+  </section>
+{% endblock %}
+

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ title|default:"Task" }}{% endblock %}
+{% block content %}
+<h1>{{ title|default:"Task" }}</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <p>
+    <label for="{{ form.title.id_for_label }}">Title</label><br>
+    {{ form.title }}
+    {% if form.title.errors %}<span class="errorlist">{{ form.title.errors }}</span>{% endif %}
+  </p>
+  <p>
+    <label for="{{ form.priority.id_for_label }}">Priority</label><br>
+    {{ form.priority }}
+    {% if form.priority.errors %}<span class="errorlist">{{ form.priority.errors }}</span>{% endif %}
+  </p>
+  <p>
+    <label for="{{ form.description.id_for_label }}">Description</label><br>
+    {{ form.description }}
+    {% if form.description.errors %}<span class="errorlist">{{ form.description.errors }}</span>{% endif %}
+  </p>
+  <p>
+    <label for="{{ form.due_date.id_for_label }}">Due date</label><br>
+    {{ form.due_date }}
+    {% if form.due_date.errors %}<span class="errorlist">{{ form.due_date.errors }}</span>{% endif %}
+  </p>
+  <button type="submit" class="btn btn--primary">Save</button>
+  <a href="{% url 'dashboard' %}" class="btn">Cancel</a>
+</form>
+{% endblock %}
+

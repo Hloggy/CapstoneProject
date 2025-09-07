@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Welcome • Task Manager{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero__copy">
+    <h1>Stay on top of your tasks</h1>
+    <p>Simple. Fast. Modern. Log in or create an account to get started.</p>
+  </div>
+
+  <div class="auth-panels">
+    <div class="panel">
+      <h2>Login</h2>
+      <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {% if request.GET.next %}
+          <input type="hidden" name="next" value="{{ request.GET.next }}">
+        {% endif %}
+        {{ login_form.non_field_errors }}
+        <label for="{{ login_form.username.id_for_label }}">Username</label>
+        {{ login_form.username }}
+        {% if login_form.username.errors %}
+          <span class="errorlist">{{ login_form.username.errors }}</span>
+        {% endif %}
+
+        <label for="{{ login_form.password.id_for_label }}">Password</label>
+        {{ login_form.password }}
+        {% if login_form.password.errors %}
+          <span class="errorlist">{{ login_form.password.errors }}</span>
+        {% endif %}
+
+        <button class="btn btn--primary w-100" type="submit">Log in</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Sign up</h2>
+      <form method="post" action="{% url 'signup' %}">
+        {% csrf_token %}
+        {{ signup_form.non_field_errors }}
+
+        <label for="{{ signup_form.username.id_for_label }}">Username</label>
+        {{ signup_form.username }}
+        {% if signup_form.username.errors %}
+          <span class="errorlist">{{ signup_form.username.errors }}</span>
+        {% endif %}
+
+        <label for="{{ signup_form.email.id_for_label }}">Email</label>
+        {{ signup_form.email }}
+        {% if signup_form.email.errors %}
+          <span class="errorlist">{{ signup_form.email.errors }}</span>
+        {% endif %}
+
+        <label for="{{ signup_form.password.id_for_label }}">Password</label>
+        {{ signup_form.password }}
+        {% if signup_form.password.errors %}
+          <span class="errorlist">{{ signup_form.password.errors }}</span>
+        {% endif %}
+
+        <label for="{{ signup_form.confirm_password.id_for_label }}">Confirm Password</label>
+        {{ signup_form.confirm_password }}
+        {% if signup_form.confirm_password.errors %}
+          <span class="errorlist">{{ signup_form.confirm_password.errors }}</span>
+        {% endif %}
+
+        <button class="btn btn--secondary w-100" type="submit">Create account</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+

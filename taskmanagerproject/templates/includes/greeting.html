@@ -1,0 +1,6 @@
+{% if request.user.is_authenticated %}
+<p class="greeting">Hi, {{ request.user.get_full_name|default:request.user.get_username }}.</p>
+{% else %}
+<p class="greeting">Hi there.</p>
+{% endif %}
+

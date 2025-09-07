@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+  <h1>Dashboard</h1>
+{% include "includes/greeting.html" %}
+
+  
+  <section style="margin-bottom:1.5rem;">
+    <h2>Create a Task</h2>
+    <form method="post" action="{% url 'task_create' %}">
+      {% csrf_token %}
+      <div style="display:grid;gap:.5rem;grid-template-columns: 1fr 1fr;">
+        <p>Title {{ form.title }}</p>
+        <p>Priority {{ form.priority }}</p>
+        <p style="grid-column:1/-1;">Description {{ form.description }}</p>
+        <p>Due date {{ form.due_date }}</p>
+      </div>
+      <button type="submit">Save Task</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Your Tasks</h2>
+    {% if tasks %}
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Due</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in tasks %}
+            <tr>
+              <td>{{ t.title }}</td>
+              <td>{{ t.get_status_display }}</td>
+              <td>{{ t.get_priority_display }}</td>
+              <td>{% if t.due_date %}{{ t.due_date|date:"Y-m-d H:i" }}{% else %}—{% endif %}</td>
+              <td>
+                <form method="post" action="{% url 'task_toggle_done' t.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit">{% if t.status == "done" %}Undo{% else %}Mark done{% endif %}</button>
+                </form>
+                <a href="{% url 'task_edit' t.id %}">Edit</a>
+                <form method="post" action="{% url 'task_delete' t.id %}" style="display:inline;" onsubmit="return confirm('Delete this task?');">
+                  {% csrf_token %}
+                  <button type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>You don’t have any tasks yet.</p>
+    {% endif %}
+  </section>
+
+  <section style="margin-top: 2rem;">
+    <h2>Notifications</h2>
+    {% if notifications %}
+      <ul>
+        {% for n in notifications %}
+          <li><strong>{{ n.created_at|date:"Y-m-d H:i" }}</strong> — {{ n.message }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No notifications right now.</p>
+    {% endif %}
+  </section>
+{% endblock %}
+
