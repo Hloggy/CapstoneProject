@@ -4,11 +4,14 @@ services:
     env: python
     plan: free
     buildCommand: |
-      pip install -r requirements.txt
+      python --version
+      pip install --upgrade pip
+      pip install -r requirements-prod.txt
+      cd taskmanagerproject
       python manage.py collectstatic --noinput
       python manage.py migrate
     startCommand: |
-      gunicorn taskmanagerproject.wsgi:application --log-file -
+      cd taskmanagerproject && gunicorn taskmanagerproject.wsgi:application --log-file -
     envVars:
       - key: SECRET_KEY
         generateValue: true
@@ -26,3 +29,4 @@ services:
 databases:
   - name: taskmanager-db
     plan: free
+
