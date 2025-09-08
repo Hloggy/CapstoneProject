@@ -22,6 +22,10 @@ SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
 DEBUG = os.getenv("DEBUG", "0") == "1"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 CSRF_TRUSTED_ORIGINS = [*filter(None, os.getenv("CSRF_TRUSTED_ORIGINS", "").split(","))]
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+  ]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -32,7 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "django_filters",
-    "taskapp",
+    "taskapp.apps.TaskappConfig",
 ]
 
 MIDDLEWARE = [
@@ -52,6 +56,8 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
+
+
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -116,7 +122,10 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = (
+    BASE_DIR / "static",           
+    )
+
 
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"

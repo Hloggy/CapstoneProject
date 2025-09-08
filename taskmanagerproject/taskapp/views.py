@@ -1,12 +1,4 @@
 from django.utils import timezone
-from django.contrib import messages
-from django.contrib.auth import login as auth_login, logout as auth_logout
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views import View
-from django.views.generic import TemplateView
-
 from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -14,18 +6,10 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-
 from .models import Task, Notification, TaskHistory
+from .serializers import TaskSerializer, NotificationSerializer, RegisterSerializer, TaskHistorySerializer
 from .permissions import IsOwner
-from .serializers import (
-    TaskSerializer,
-    NotificationSerializer,
-    RegisterSerializer,
-    TaskHistorySerializer,
-)
 from .filters import TaskFilter, NotificationFilter, TaskHistoryFilter
-from .forms import LoginForm, SignupForm, TaskForm
-
 
 class RegisterView(CreateAPIView):
     authentication_classes = []
@@ -57,9 +41,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class NotificationViewSet(mixins.ListModelMixin,
-                          mixins.UpdateModelMixin,
-                          viewsets.GenericViewSet):
+class NotificationViewSet(mixins.ListModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     serializer_class = NotificationSerializer
     permission_classes = [IsAuthenticated, IsOwner]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -76,9 +58,7 @@ class NotificationViewSet(mixins.ListModelMixin,
         return Response({"updated": updated}, status=status.HTTP_200_OK)
 
 
-class TaskHistoryViewSet(mixins.ListModelMixin,
-                         mixins.RetrieveModelMixin,
-                         viewsets.GenericViewSet):
+class TaskHistoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = TaskHistorySerializer
     permission_classes = [IsAuthenticated, IsOwner]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -88,28 +68,31 @@ class TaskHistoryViewSet(mixins.ListModelMixin,
     def get_queryset(self):
         return TaskHistory.objects.filter(user=self.request.user).select_related("task")
 
+# This accomodates home,login and signup
+from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import TemplateView
+from .forms import LoginForm, SignupForm, TaskForm
 
 class HomeView(TemplateView):
     template_name = "landing.html"
-
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {
             "login_form": LoginForm(),
             "signup_form": SignupForm(),
         })
 
-
 def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
             auth_login(request, form.cleaned_data["user"])
-            messages.success(request, "Logged in successfully.")
             return redirect("dashboard")
     else:
         form = LoginForm()
     return render(request, "registration/login.html", {"form": form})
-
 
 def signup_view(request):
     if request.method == "POST":
@@ -117,32 +100,21 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             auth_login(request, user)
-            messages.success(request, "Account created and logged in.")
             return redirect("dashboard")
     else:
         form = SignupForm()
     return render(request, "registration/signup.html", {"form": form})
 
-
 def logout_view(request):
     auth_logout(request)
-    messages.info(request, "You have been logged out.")
     return redirect("home")
 
-
-class DashboardView(LoginRequiredMixin, View):
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboard.html"
-
-    def get(self, request):
-        tasks = Task.objects.filter(user=request.user).order_by("-created_at")
-        notifications = Notification.objects.filter(user=request.user).order_by("-created_at")[:20]
-        form = TaskForm()
-        return render(request, self.template_name, {
-            "tasks": tasks,
-            "notifications": notifications,
-            "form": form,
-        })
-
+    def get(self, request, *args, **kwargs):
+        tasks = Task.objects.filter(user=request.user).order_by("-created_at")[:10]
+        notifications = Notification.objects.filter(user=request.user).order_by("-created_at")[:10]
+        return render(request, self.template_name, {"tasks": tasks, "notifications": notifications})
 
 @login_required
 def create_task(request):
@@ -152,42 +124,28 @@ def create_task(request):
             t = form.save(commit=False)
             t.user = request.user
             t.save()
-            messages.success(request, "Task created.")
             return redirect("dashboard")
     else:
         form = TaskForm()
-    return render(request, "task_form.html", {"form": form, "title": "Create Task"})
-
+    return render(request, "task_form.html", {"form": form, "title": "New Task"})
 
 @login_required
-def edit_task(request, pk):
+def edit_task(request, pk: int):
     task = get_object_or_404(Task, pk=pk, user=request.user)
     if request.method == "POST":
         form = TaskForm(request.POST, instance=task)
         if form.is_valid():
             form.save()
-            messages.success(request, "Task updated.")
             return redirect("dashboard")
     else:
         form = TaskForm(instance=task)
-    return render(request, "task_form.html", {"form": form, "title": "Edit Task"})
-
+    return render(request, "task_form.html", {"form": form, "title": f"Edit: {task.title}"})
 
 @login_required
-def delete_task(request, pk):
+def delete_task(request, pk: int):
     task = get_object_or_404(Task, pk=pk, user=request.user)
     if request.method == "POST":
         task.delete()
-        messages.success(request, "Task deleted.")
         return redirect("dashboard")
     return render(request, "confirm_delete.html", {"object": task})
 
-
-@login_required
-def toggle_done(request, pk):
-    task = get_object_or_404(Task, pk=pk, user=request.user)
-    if request.method == "POST":
-        task.status = "done" if task.status != "done" else "todo"
-        task.save(update_fields=["status"])
-        messages.info(request, f"Task marked {'done' if task.status == 'done' else 'to do'}.")
-    return redirect("dashboard")

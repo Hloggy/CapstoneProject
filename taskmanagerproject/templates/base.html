@@ -1,26 +1,25 @@
 <!doctype html>
 <html lang="en">
 <head>
-   {% load static %}
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{% block title %}Task Manager{% endblock %}</title>
+  {% load static %}
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
-  {% csrf_token %}
 </head>
 <body class="bg-surface">
   <header class="nav">
-    <div class="nav__brand">TaskManager</div>
+    <div class="nav__brand text-gradient">TaskManager</div>
     <nav class="nav__links">
       {% if request.user.is_authenticated %}
-        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a class="btn btn--ghost" href="{% url 'dashboard' %}">Dashboard</a>
         <form action="{% url 'logout' %}" method="post" style="display:inline;">
           {% csrf_token %}
           <button class="btn btn--ghost" type="submit">Logout</button>
         </form>
       {% else %}
-        <a href="{% url 'login' %}">Login</a>
-        <a class="btn btn--primary" href="{% url 'signup' %}">Sign up</a>
+        <a class="btn btn--ghost" href="{% url 'login' %}">Login</a>
+        <a class="btn btn--gradient" href="{% url 'signup' %}">Sign up</a>
       {% endif %}
     </nav>
   </header>
@@ -30,7 +29,7 @@
   </main>
 
   <footer class="footer">
-    <small>© {{ now|default:2025 }} TaskManager</small>
+    <small>© 2025 TaskManager</small>
   </footer>
 </body>
 </html>

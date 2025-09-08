@@ -1,6 +1,10 @@
 from django.apps import AppConfig
 
-
 class TaskappConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'taskapp'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "taskapp"
+
+    def ready(self):
+        
+        from . import signals  
+

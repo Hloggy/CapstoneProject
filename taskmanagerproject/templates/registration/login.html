@@ -1,53 +1,17 @@
 {% extends "base.html" %}
-{% load static %}
 {% block title %}Log in{% endblock %}
-
-
 {% block content %}
 <section class="auth-page">
   <h1>Log in</h1>
-
-
-  {% if form.non_field_errors %}
-    <div class="errorlist nonfield">
-      {{ form.non_field_errors }}
-    </div>
-  {% endif %}
-
-
+  {% if form.non_field_errors %}<div class="errorlist nonfield">{{ form.non_field_errors }}</div>{% endif %}
   <form method="post" action="{% url 'login' %}">
     {% csrf_token %}
-    {% if request.GET.next %}
-      <input type="hidden" name="next" value="{{ request.GET.next }}">
-    {% endif %}
-
-
-    <p>
-      <label for="{{ form.username.id_for_label }}">Username</label><br>
-      {{ form.username }}
-      {% if form.username.errors %}
-        <span class="errorlist">{{ form.username.errors }}</span>
-      {% endif %}
-    </p>
-
-
-    <p>
-      <label for="{{ form.password.id_for_label }}">Password</label><br>
-      {{ form.password }}
-      {% if form.password.errors %}
-        <span class="errorlist">{{ form.password.errors }}</span>
-      {% endif %}
-    </p>
-
-
-    <button class="btn btn--primary" type="submit">Log in</button>
+    {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}">{% endif %}
+    <p><label for="{{ form.username.id_for_label }}">Username</label><br>{{ form.username }}</p>
+    <p><label for="{{ form.password.id_for_label }}">Password</label><br>{{ form.password }}</p>
+    <button type="submit" class="btn btn--primary">Log in</button>
   </form>
-
-
-  <p style="margin-top:1rem;">
-    Don’t have an account?
-    <a href="{% url 'signup' %}">Create one</a>.
-  </p>
+  <p style="margin-top:1rem;">Don’t have an account? <a href="{% url 'signup' %}">Create one</a>.</p>
 </section>
 {% endblock %}
 

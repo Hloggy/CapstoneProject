@@ -17,6 +17,7 @@ class TaskFilter(django_filters.FilterSet):
 
     is_completed = django_filters.BooleanFilter(method="filter_is_completed")
 
+    
     overdue = django_filters.BooleanFilter(method="filter_overdue", help_text="True = due_date < now and not completed")
     due_within_hours = django_filters.NumberFilter(method="filter_due_within_hours", help_text="Return tasks due within N hours")
     has_notifications = django_filters.BooleanFilter(method="filter_has_notifications")
@@ -51,7 +52,7 @@ class TaskFilter(django_filters.FilterSet):
         return queryset
 
     def filter_due_within_hours(self, queryset, name, value):
-        # value can be None; guard
+        
         try:
             hours = int(value)
         except (TypeError, ValueError):
@@ -81,7 +82,7 @@ class NotificationFilter(django_filters.FilterSet):
 
 
 class TaskHistoryFilter(django_filters.FilterSet):
-    action = django_filters.CharFilter(field_name="action", lookup_expr="iexact")
+    action = django_filters.CharFilter(field_name="action", lookup_expr="iexact")  
     task = django_filters.NumberFilter(field_name="task__id")
     created_between = django_filters.DateTimeFromToRangeFilter(field_name="created_at")
 

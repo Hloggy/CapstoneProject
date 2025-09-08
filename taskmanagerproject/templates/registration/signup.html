@@ -1,34 +1,17 @@
 {% extends "base.html" %}
-{% load static %}
 {% block title %}Sign up{% endblock %}
-
 {% block content %}
-  <h1>Create account</h1>
-
-  {% if form.errors %}
-    <ul class="errorlist">
-      {% for field in form %}
-        {% for error in field.errors %}
-          <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-        {% endfor %}
-      {% endfor %}
-      {% for error in form.non_field_errors %}
-        <li>{{ error }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
+<section class="auth-page">
+  <h1>Create your account</h1>
+  {% if form.non_field_errors %}<div class="errorlist nonfield">{{ form.non_field_errors }}</div>{% endif %}
   <form method="post" action="{% url 'signup' %}">
     {% csrf_token %}
-    <p>{{ form.username }}</p>
-    <p>{{ form.email }}</p>
-    <p>{{ form.password1 }}</p>
-    <p>{{ form.password2 }}</p>
-    <button type="submit" class="btn btn-success w-100 mt-2">Create account</button>
+    <p><label for="{{ form.username.id_for_label }}">Username</label><br>{{ form.username }}</p>
+    <p><label for="{{ form.email.id_for_label }}">Email</label><br>{{ form.email }}</p>
+    <p><label for="{{ form.password.id_for_label }}">Password</label><br>{{ form.password }}</p>
+    <p><label for="{{ form.confirm_password.id_for_label }}">Confirm Password</label><br>{{ form.confirm_password }}</p>
+    <button type="submit" class="btn btn--secondary">Create account</button>
   </form>
-
-  <p style="margin-top:.5rem">
-    Already have an account? <a href="{% url 'login' %}">Log in</a>
-  </p>
-{% endblock %}
-
+  <p style="margin-top:1rem;">Already have an account? <a href="{% url 'login' %}">Log in</a>.</p>
+</section>
+{% endblock %} 
